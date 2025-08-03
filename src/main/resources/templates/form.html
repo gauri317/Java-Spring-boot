@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yoga Registration</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  background: url('/form-bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+    .go-home {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #ffffff;
+      color: #008060;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      z-index: 2;
+    }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+      z-index: 2;
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .icon {
+      display: flex;
+      justify-content: center;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #008060;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background-color: #008060;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: #00664d;
+    }
+
+    @media (max-width: 480px) {
+      .form-container {
+        margin: 0 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Go Home Button -->
+  <a href="/" class="go-home">Go Home</a>
+
+  <!-- Form Container -->
+  <div class="form-container">
+    <div class="icon">
+      <i class="fa-solid fa-circle-user"></i>
+    </div>
+    <h2>Yoga Joiner Form</h2>
+    <form id="yogaForm">
+      <input type="text" name="username" placeholder="Enter your username" required />
+      <input type="password" name="password" placeholder="Enter your password" required />
+      <input type="email" name="email" placeholder="Enter your email" required />
+      <input type="text" name="location" placeholder="Enter your location" required />
+      <textarea name="message" rows="4" placeholder="Enter your message" required></textarea>
+      <button type="submit" class="submit-btn">Submit</button>
+    </form>
+  </div>
+
+  <!-- JS: Form Submission -->
+  <script>
+    document.getElementById("yogaForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch("/submitForm", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert("🧘‍♀️ Form submitted successfully!");
+          form.reset();
+        } else {
+          alert("❌ Something went wrong. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        alert("⚠️ Error submitting form. Check console.");
+      }
+    });
+  </script>
+
+</body>
+</html>

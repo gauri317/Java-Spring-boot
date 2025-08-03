@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('/images/admin-bg.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 1100px;
+            width: 90%;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 32px;
+            color: #222;
+            margin: 0;
+        }
+
+        .home-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .home-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .add-btn {
+            display: block;
+            margin-left: auto;
+            margin-bottom: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+            text-decoration: none;
+        }
+
+        .add-btn:hover {
+            background-color: #218838;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            padding: 12px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        tbody tr td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .row-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .row-form input[type="text"],
+        .row-form input[type="email"] {
+            padding: 6px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .row-form input[readonly] {
+            background-color: #f0f0f0;
+        }
+
+        .row-form button {
+            padding: 6px 12px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .save-btn {
+            background-color: #28a745;
+        }
+
+        .save-btn:hover {
+            background-color: #218838;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        td[colspan="6"] {
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>New Joiner Data</h2>
+        <a th:href="@{/}" class="home-btn">Home</a>
+    </div>
+
+    <a th:href="@{/form}" class="add-btn">+ Add New Joiner Details</a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>EMAIL</th>
+            <th>USERNAME</th>
+            <th>LOCATION</th>
+            <th>ACTIONS</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="employee : ${employees}" th:attr="data-id=${employee.id}">
+            <td colspan="6">
+                <form th:action="@{/update}" method="post" class="row-form">
+                    <input type="text" name="id" th:value="${employee.id}" readonly style="width: 60px;" />
+                    <input type="text" name="name" th:value="${employee.name}" required />
+                    <input type="email" name="email" th:value="${employee.email}" required />
+                    <input type="text" name="username" th:value="${employee.username}" required />
+                    <input type="text" name="location" th:value="${employee.location}" required />
+                    <button type="submit" class="save-btn">Edit</button>
+                    <button type="button" class="delete-btn"
+                            th:onclick="'deleteEmployee(' + ${employee.id} + ')'">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+async function deleteEmployee(id) {
+    if (!confirm("Are you sure you want to delete?")) return; 
+    try {
+        const response = await fetch(`/delete/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            alert("Error deleting.");
+            return; }
+        alert("Deleted successfully.");
+        document.querySelector(`tr[data-id="${id}"]`)?.remove();
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to delete.");
+   
+    }
+}
+</script>
+
+</body>
+</html>
