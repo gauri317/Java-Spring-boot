@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -17,7 +18,6 @@ public class JoinerController {
     public JoinerController(FormDataRepository repo) {
         this.repo = repo;
     }
-
 
     @GetMapping("/")
     public String showWelcome() {
@@ -37,12 +37,10 @@ public class JoinerController {
         return "{\"message\": \"Form submitted successfully!\"}";
     }
 
-
     @GetMapping("/login")
     public String showLoginForm() {
         return "login";
     }
-
 
     @PostMapping("/login")
     public String login(@RequestParam String username,
@@ -62,39 +60,25 @@ public class JoinerController {
         return "admin";
     }
 
-  
-    @GetMapping("/delete/{id}")
-    public String deleteEntry(@PathVariable Long id) {
-        repo.deleteById(id);
-        return "redirect:/admin";
-    }
-
-    
-    @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Long id, Model model) {
-        FormData data = repo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid ID: " + id));
-        model.addAttribute("formData", data);
-        return "form";
-    }
-
-    @PostMapping("/update")
-public String updateEmployee(@ModelAttribute FormData updatedData) {
-    Optional<FormData> optional = repo.findById(updatedData.getId());
-    if (optional.isPresent()) {
-        FormData employee = optional.get();
-        employee.setName(updatedData.getName());
-        employee.setEmail(updatedData.getEmail());
-        employee.setUsername(updatedData.getUsername());
-        employee.setLocation(updatedData.getLocation());
-        repo.save(employee);
-    }
-    return "redirect:/admin";
-}
-@DeleteMapping("/delete/{id}")
-public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
     repo.deleteById(id);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok("Employee deleted successfully");
 }
 
+
+    // NEW: Update Registration Number only
+    @PutMapping("/updateRegistration/{id}")
+    @ResponseBody
+    public ResponseEntity<String> updateRegistration(@PathVariable Long id,
+                                                     @RequestBody Map<String, String> payload) {
+        Optional<FormData> optional = repo.findById(id);
+        if (optional.isPresent()) {
+            FormData employee = optional.get();
+            employee.setRegistrationNumber(payload.get("registrationNumber")); // You must add this field to FormData
+            repo.save(employee);
+            return ResponseEntity.ok("Updated successfully");
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
